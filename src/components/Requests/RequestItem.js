@@ -1,9 +1,16 @@
 import React, {useContext} from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { CheckIcon, XMarkIcon, ArrowUpTrayIcon, TrashIcon } from '@heroicons/react/24/solid'
+import moment from 'moment';
+
+const updateState = async (id, state) => {
+
+};
 
 const RequestItem = ({item, index}) => {
     const { isAdmin, isPurchaseTeam } = useContext(AuthContext);
+
+    item.createdAt[6] /= 10000000;
 
     let mainClass = 'flex flex-row gap-2 p-2';
     if (index % 2) {
@@ -11,14 +18,14 @@ const RequestItem = ({item, index}) => {
     }
 
     let statusClass = 'rounded-full text-white px-2 py-1 text-xs';
-    switch (item.status) {
-        case 'pending':
+    switch (item.state) {
+        case 'PENDING':
             statusClass += ' bg-yellow-500';
             break;
-        case 'approved':
+        case 'ACCEPTED':
             statusClass += ' bg-green-500';
             break;
-        case 'rejected':
+        case 'REJECTED':
             statusClass += ' bg-red-500';
             break;
         default:
@@ -27,18 +34,18 @@ const RequestItem = ({item, index}) => {
     return <div className={mainClass}>
         <div className='w-1/12'>{item.id}</div>
         <div className='flex-1'>{item.detail}</div>
-        <div className='w-1/12'>{item.createdAt}</div>
-        <div className='w-1/12'>{item.user.name}</div>
+        <div className='w-1/12'>{moment(item.createdAt).format('DD-MM-YYYY')}</div>
+        <div className='w-1/6'>{item.user.name}</div>
         <div className='w-1/12'>{item.deposit}</div>
         <div className='w-1/12'>{item.totalPrice}</div>
         <div className='w-1/12 flex items-center'>
-            <span className={statusClass}>{item.status}</span>
+            <span className={statusClass}>{item.state}</span>
         </div>
-        <div className='w-1/12 flex flex-row'>
-            {isAdmin() && <button className='bg-green-500 text-white rounded-full mr-2'><CheckIcon className='size-6'/></button>}
-            {isAdmin() && <button className='bg-red-500 text-white rounded-full'><XMarkIcon className='size-6'/></button>}
-            {isPurchaseTeam() && <button className='bg-blue-500 text-white rounded-full'><ArrowUpTrayIcon className='size-6'/></button>}
-            {isPurchaseTeam() && <button className='bg-red-500 text-white rounded-full ml-2'><TrashIcon className='size-6'/></button>}
+        <div className='w-1/6 flex flex-row'>
+            {isAdmin() && item.state === 'PENDING' && <button className='bg-green-500 text-white px-2 py-0 mr-2'>ACCEPT</button>}
+            {isAdmin() && item.state === 'PENDING' && <button className='bg-red-500 text-white px-2 py-0'>DECLINE</button>}
+            {isPurchaseTeam() && item.state !== 'PENDING' && <button className='bg-blue-500 text-white rounded-full'><ArrowUpTrayIcon className='size-6'/></button>}
+            {isPurchaseTeam() && item.state === 'PENDING' && <button className='bg-red-500 text-white rounded-full ml-2'><TrashIcon className='size-6'/></button>}
         </div>
     </div>
 };
@@ -50,11 +57,11 @@ const RequestItemHeader = () => {
         <div className='w-1/12'>ID</div>
         <div className='flex-1'>Detail</div>
         <div className='w-1/12'>Created at</div>
-        <div className='w-1/12'>Created by</div>
+        <div className='w-1/6'>Created by</div>
         <div className='w-1/12'>Deposit</div>
         <div className='w-1/12'>Total price</div>
         <div className='w-1/12'>Status</div>
-        <div className='w-1/12'>Action</div>
+        <div className='w-1/6'>Action</div>
     </div>   
 };
 

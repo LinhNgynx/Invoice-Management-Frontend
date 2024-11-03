@@ -9,7 +9,7 @@ const RequestList = () => {
     const fetchRequests = async () => {
       try {
         const response = await axios.get('http://localhost:8080/api/requests/');
-        setRequests(response.data);
+        setRequests(response.data.items);
       } catch (error) {
         console.error('Error fetching requests', error);
       }
