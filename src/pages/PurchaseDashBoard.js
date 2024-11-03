@@ -12,6 +12,9 @@ const PurchaseDashboard = () => {
             <Link to="create-request">Create Request</Link>
           </li>
           <li>
+            <Link to="requests">Request List</Link>
+          </li>
+          <li>
             <Link to="save-bill">Save Bill</Link>
           </li>
           <li>

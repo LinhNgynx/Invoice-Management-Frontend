@@ -46,9 +46,9 @@ const RequestItem = ({item, index}) => {
         default:
             statusClass += ' bg-gray-500';
     }
-    return <div className={mainClass} onClick={() => {navigate(item.id)}}>
+    return <div className={mainClass}>
         <div className='w-1/12'>{item.id}</div>
-        <div className='flex-1'>{item.detail}</div>
+        <div className='flex-1 text-sky-500 hover:text-sky-700' onClick={() => {navigate(item.id)}}>{item.detail}</div>
         <div className='w-1/12'>{moment(item.createdAt).format('DD-MM-YYYY')}</div>
         <div className='w-1/6'>{item.user.name}</div>
         <div className='w-1/12'>{item.deposit}</div>
@@ -69,9 +69,9 @@ const RequestItem = ({item, index}) => {
             >
                 DECLINE
             </button>}
-            {isPurchaseTeam() && item.state !== 'PENDING' && <button className='bg-blue-500 text-white rounded-full'><ArrowUpTrayIcon className='size-6'/></button>}
+            {isPurchaseTeam() && item.state !== 'PENDING' && <button className='text-blue-500'><ArrowUpTrayIcon className='size-6'/></button>}
             {isPurchaseTeam() && item.state === 'PENDING' && <button 
-                className='bg-red-500 text-white rounded-full ml-2'
+                className='text-red-500'
                 onClick={() => deleteItem(item.id)}
             >
                 <TrashIcon className='size-6'/>

@@ -40,6 +40,8 @@ const App = () => {
             }
           >
             <Route path="create-request" element={<CreateRequest />} />
+            <Route path="requests" element={<RequestList />} />
+            <Route path="requests/:id" element={<RequestDetail />} />
             <Route path="save-bill" element={<SaveBill />} />
             <Route path="statistics" element={<PurchaseStatistics />} />
             <Route path="logout" element={<Logout />} />
