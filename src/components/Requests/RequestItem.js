@@ -1,9 +1,9 @@
-import React, {useContext} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import axios from 'axios';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { CheckIcon, XMarkIcon, ArrowUpTrayIcon, TrashIcon } from '@heroicons/react/24/solid'
+import { ArrowUpTrayIcon, ArrowDownTrayIcon, TrashIcon } from '@heroicons/react/24/solid'
 
 const updateState = async (id, state) => {
     try {
@@ -21,19 +21,31 @@ const deleteItem = async (id) => {
     }
 };
 
+const uploadFile = async (id, file) => {
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+        await axios.put(`http://localhost:8080/api/requests/${id}/bills/`, formData);
+    } catch (error) {
+        console.error('Error uploading file', error);
+    }
+};
+
 const RequestItem = ({item, index}) => {
     const { isAdmin, isPurchaseTeam } = useContext(AuthContext);
+    const [deleted, setDeleted] = useState(false);
+    const [state, setState] = useState(item.state);
     const navigate = useNavigate();
+    const uploadRef = useRef(null);
 
     item.createdAt[6] /= 10000000;
 
     let mainClass = 'flex flex-row gap-2 p-2';
-    if (index % 2) {
-        mainClass += ' bg-gray-200';
-    }
+    if (index % 2) mainClass += ' bg-gray-200';
+    if (deleted) mainClass += ' hidden';
 
     let statusClass = 'rounded-full text-white px-2 py-1 text-xs';
-    switch (item.state) {
+    switch (state) {
         case 'PENDING':
             statusClass += ' bg-yellow-500';
             break;
@@ -54,25 +66,49 @@ const RequestItem = ({item, index}) => {
         <div className='w-1/12'>{item.deposit}</div>
         <div className='w-1/12'>{item.totalPrice}</div>
         <div className='w-1/12 flex items-center'>
-            <span className={statusClass}>{item.state}</span>
+            <span className={statusClass}>{state}</span>
         </div>
         <div className='w-1/6 flex flex-row'>
-            {isAdmin() && item.state === 'PENDING' && <button 
+            {isAdmin() && state === 'PENDING' && <button 
                 className='bg-green-500 text-white px-2 py-0 mr-2'
-                onClick={() => updateState(item.id, 'ACCEPTED')}
+                onClick={() => {
+                    updateState(item.id, 'ACCEPTED');
+                    setState('ACCEPTED');
+                }}
             >
                 ACCEPT
             </button>}
-            {isAdmin() && item.state === 'PENDING' && <button 
+            {isAdmin() && state === 'PENDING' && <button 
                 className='bg-red-500 text-white px-2 py-0'
-                onClick={() => updateState(item.id, 'REJECTED')}
+                onClick={() => {
+                    updateState(item.id, 'REJECTED');
+                    setState('REJECTED');
+                }}
             >
                 DECLINE
             </button>}
-            {isPurchaseTeam() && item.state !== 'PENDING' && <button className='text-blue-500'><ArrowUpTrayIcon className='size-6'/></button>}
-            {isPurchaseTeam() && item.state === 'PENDING' && <button 
+            {isPurchaseTeam() && state === 'ACCEPTED' && <button 
+                className='text-blue-500 mr-2'
+                onClick={() => {uploadRef.current.click()}}
+            >
+                <ArrowUpTrayIcon className='size-6'/>
+                <input ref={uploadRef} type='file' className='hidden' onChange={(event) => {
+                    let file = event.target.files[0];
+                    uploadFile(item.id, file);
+                }}/>
+            </button>}
+            {state === 'ACCEPTED' && <button 
+                className='text-blue-500'
+                onClick={() => {}}
+            >
+                <ArrowDownTrayIcon className='size-6'/>
+            </button>}
+            {isPurchaseTeam() && state === 'PENDING' && <button 
                 className='text-red-500'
-                onClick={() => deleteItem(item.id)}
+                onClick={() => {
+                    deleteItem(item.id);
+                    setDeleted(true);
+                }}
             >
                 <TrashIcon className='size-6'/>
             </button>}
