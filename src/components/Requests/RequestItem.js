@@ -1,14 +1,29 @@
 import React, {useContext} from 'react';
+import axios from 'axios';
+import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { CheckIcon, XMarkIcon, ArrowUpTrayIcon, TrashIcon } from '@heroicons/react/24/solid'
-import moment from 'moment';
 
 const updateState = async (id, state) => {
+    try {
+        await axios.put(`http://localhost:8080/api/requests/${id}`, { state });
+    } catch (error) {
+        console.error('Error updating request state', error);
+    }
+};
 
+const deleteItem = async (id) => {
+    try {
+        await axios.delete(`http://localhost:8080/api/requests/${id}`);
+    } catch (error) {
+        console.error('Error deleting request', error);
+    }
 };
 
 const RequestItem = ({item, index}) => {
     const { isAdmin, isPurchaseTeam } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     item.createdAt[6] /= 10000000;
 
@@ -31,7 +46,7 @@ const RequestItem = ({item, index}) => {
         default:
             statusClass += ' bg-gray-500';
     }
-    return <div className={mainClass}>
+    return <div className={mainClass} onClick={() => {navigate(item.id)}}>
         <div className='w-1/12'>{item.id}</div>
         <div className='flex-1'>{item.detail}</div>
         <div className='w-1/12'>{moment(item.createdAt).format('DD-MM-YYYY')}</div>
@@ -42,10 +57,25 @@ const RequestItem = ({item, index}) => {
             <span className={statusClass}>{item.state}</span>
         </div>
         <div className='w-1/6 flex flex-row'>
-            {isAdmin() && item.state === 'PENDING' && <button className='bg-green-500 text-white px-2 py-0 mr-2'>ACCEPT</button>}
-            {isAdmin() && item.state === 'PENDING' && <button className='bg-red-500 text-white px-2 py-0'>DECLINE</button>}
+            {isAdmin() && item.state === 'PENDING' && <button 
+                className='bg-green-500 text-white px-2 py-0 mr-2'
+                onClick={() => updateState(item.id, 'ACCEPTED')}
+            >
+                ACCEPT
+            </button>}
+            {isAdmin() && item.state === 'PENDING' && <button 
+                className='bg-red-500 text-white px-2 py-0'
+                onClick={() => updateState(item.id, 'REJECTED')}
+            >
+                DECLINE
+            </button>}
             {isPurchaseTeam() && item.state !== 'PENDING' && <button className='bg-blue-500 text-white rounded-full'><ArrowUpTrayIcon className='size-6'/></button>}
-            {isPurchaseTeam() && item.state === 'PENDING' && <button className='bg-red-500 text-white rounded-full ml-2'><TrashIcon className='size-6'/></button>}
+            {isPurchaseTeam() && item.state === 'PENDING' && <button 
+                className='bg-red-500 text-white rounded-full ml-2'
+                onClick={() => deleteItem(item.id)}
+            >
+                <TrashIcon className='size-6'/>
+            </button>}
         </div>
     </div>
 };

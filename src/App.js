@@ -13,6 +13,7 @@ import SaveBill from "./components/Requests/SaveBill";
 import PurchaseStatistics from "./components/Statistics/PurchaseStatistics";
 import Logout from "./components/LogOut/LogOut";
 import NotFound from "./pages/NotFound";
+import RequestDetail from "./components/Requests/RequestDetail";
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
           >
             <Route path="statistics" element={<AdminStatistics />} />
             <Route path="requests" element={<RequestList />} />
+            <Route path="requests/:id" element={<RequestDetail />} />
             <Route path="logout" element={<Logout />} />
           </Route>
           <Route
