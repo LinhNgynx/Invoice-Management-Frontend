@@ -6,9 +6,9 @@ const PrivateRoute = ({ element, requiredRole }) => {
   const { isAuthenticated, isAdmin, isPurchaseTeam } = useContext(AuthContext);
 
   const hasAccess = () => {
-    if (requiredRole === 'admin') return isAdmin();
-    if (requiredRole === 'purchase') return isPurchaseTeam();
-    return false; 
+    if (requiredRole === 'MANAGER') return isAdmin();
+    if (requiredRole === 'MEMBER') return isPurchaseTeam();
+    return false;
   };
 
   return isAuthenticated() && hasAccess() ? element : <Navigate to="/login" />;
