@@ -24,7 +24,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/create-request" element={<CreateRequest />} />
           <Route
-            path="/admin/dashboard/*"
+            path="/admin/*"
             element={
               <PrivateRoute
                 element={<AdminDashboard />}
@@ -32,13 +32,13 @@ const App = () => {
               />
             }
           >
-            <Route path="statistics" element={<AdminStatistics />} />
+            <Route path="" element={<AdminStatistics />} />
             <Route path="requests" element={<RequestList />} />
             <Route path="requests/:id" element={<RequestDetail />} />
             <Route path="logout" element={<Logout />} />
           </Route>
           <Route
-            path="/purchase/dashboard/*"
+            path="/purchase/*"
             element={
               <PrivateRoute
                 element={<PurchaseDashboard />}
@@ -53,15 +53,7 @@ const App = () => {
             <Route path="statistics" element={<PurchaseStatistics />} />
             <Route path="logout" element={<Logout />} />
           </Route>
-          <Route
-            path="/purchase/dashboard"
-            element={
-              <PrivateRoute
-                element={<PurchaseDashboard />}
-                requiredRole="MEMBER"
-              />
-            }
-          />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

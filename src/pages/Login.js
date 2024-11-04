@@ -18,7 +18,7 @@ const Login = () => {
       if (isAdmin()) {
         navigate('/admin/dashboard');
       } else if (isPurchaseTeam()) {
-        navigate('/purchase/dashboard');
+        navigate('/purchase/requests');
       }
     }
   }, [user, isAdmin, isPurchaseTeam, navigate]);
