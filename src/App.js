@@ -1,19 +1,19 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
-import Login from "./components/Auth/Login";
-import PrivateRoute from "./components/Auth/PrivateRoute";
-import Home from "./pages/Home";
-import AdminDashboard from "./pages/AdminDashBoard";
-import PurchaseDashboard from "./pages/PurchaseDashBoard";
-import AdminStatistics from "./components/Statistics/AdminStatistics";
-import RequestList from "./components/Requests/RequestList";
-import CreateRequest from "./components/Requests/CreateRequest";
-import SaveBill from "./components/Requests/SaveBill";
-import PurchaseStatistics from "./components/Statistics/PurchaseStatistics";
-import Logout from "./components/LogOut/LogOut";
-import NotFound from "./pages/NotFound";
-import RequestDetail from "./components/Requests/RequestDetail";
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import Login from './pages/Login';
+import PrivateRoute from './components/Auth/PrivateRoute';
+import Home from './pages/Home';
+import AdminDashboard from './pages/AdminDashBoard';
+import PurchaseDashboard from './pages/PurchaseDashBoard';
+import AdminStatistics from './components/Statistics/AdminStatistics';
+import RequestList from './components/Requests/RequestList';
+import CreateRequest from './components/Requests/CreateRequest';
+import SaveBill from './components/Requests/SaveBill';
+import PurchaseStatistics from './components/Statistics/PurchaseStatistics';
+import Logout from './components/LogOut/LogOut';
+import NotFound from './pages/NotFound';
+import RequestDetail from './components/Requests/RequestDetail';
 
 const App = () => {
   return (
@@ -26,7 +26,10 @@ const App = () => {
           <Route
             path="/admin/dashboard/*"
             element={
-              <PrivateRoute element={<AdminDashboard />} requiredRole="admin" />
+              <PrivateRoute
+                element={<AdminDashboard />}
+                requiredRole="MANAGER"
+              />
             }
           >
             <Route path="statistics" element={<AdminStatistics />} />
@@ -37,7 +40,10 @@ const App = () => {
           <Route
             path="/purchase/dashboard/*"
             element={
-              <PrivateRoute element={<PurchaseDashboard />} requiredRole="purchase" />
+              <PrivateRoute
+                element={<PurchaseDashboard />}
+                requiredRole="MEMBER"
+              />
             }
           >
             {/* <Route path="create-request" element={<CreateRequest />} /> */}
@@ -52,7 +58,7 @@ const App = () => {
             element={
               <PrivateRoute
                 element={<PurchaseDashboard />}
-                requiredRole="purchase"
+                requiredRole="MEMBER"
               />
             }
           />
