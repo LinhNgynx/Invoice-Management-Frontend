@@ -9,7 +9,7 @@ const PurchaseDashboard = () => {
   ];
 
   return (
-    <Layout navs={navs}>
+    <Layout navs={navs} pathName={'member'}>
       <Outlet />
     </Layout>
   );

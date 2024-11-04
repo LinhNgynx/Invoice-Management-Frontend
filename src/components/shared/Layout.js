@@ -1,8 +1,18 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IoLogOutOutline } from 'react-icons/io5';
+import { AuthContext } from '../../context/AuthContext';
 
-const Layout = ({ children, navs }) => {
+const Layout = ({ children, navs, pathName }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { logout, user } = useContext(AuthContext);
+
+  const doLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
@@ -15,7 +25,11 @@ const Layout = ({ children, navs }) => {
             <Link
               key={index}
               to={item.path}
-              className="px-4 py-2 rounded hover:bg-gray-700 transition duration-200"
+              className={`px-4 py-2 rounded transition duration-200 ${
+                location.pathname === '/' + pathName + '/' + item.path
+                  ? 'bg-gray-700 font-semibold'
+                  : 'hover:bg-gray-700'
+              }`}
             >
               {item.name}
             </Link>
@@ -29,10 +43,8 @@ const Layout = ({ children, navs }) => {
         <header className="bg-white border-b border-gray-300 p-4 flex justify-between items-center">
           <h1 className="text-lg font-semibold">Invoice Management System</h1>
           <div className="flex items-center space-x-4">
-            <button className="text-gray-500 hover:text-gray-700 transition duration-200">
-              Admin
-            </button>
-            <button>
+            <div className="">{user.name}</div>
+            <button onClick={doLogout}>
               <IoLogOutOutline className="text-2xl" />
             </button>
           </div>

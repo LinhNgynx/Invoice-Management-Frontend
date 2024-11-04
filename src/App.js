@@ -14,6 +14,7 @@ import PurchaseStatistics from './components/Statistics/PurchaseStatistics';
 import Logout from './components/LogOut/LogOut';
 import NotFound from './pages/NotFound';
 import RequestDetail from './components/Requests/RequestDetail';
+import MemberList from './components/Member/MemberList';
 
 const App = () => {
   return (
@@ -23,7 +24,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route
-            path="/admin/*"
+            path="/manager/*"
             element={
               <PrivateRoute
                 element={<AdminDashboard />}
@@ -33,11 +34,12 @@ const App = () => {
           >
             <Route path="" element={<AdminStatistics />} />
             <Route path="requests" element={<RequestList />} />
+            <Route path="members" element={<MemberList />} />
             <Route path="requests/:id" element={<RequestDetail />} />
             <Route path="logout" element={<Logout />} />
           </Route>
           <Route
-            path="/purchase/*"
+            path="/member/*"
             element={
               <PrivateRoute
                 element={<PurchaseDashboard />}

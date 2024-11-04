@@ -6,12 +6,12 @@ const AdminDashboard = () => {
   const navs = [
     { name: 'Dashboard', path: 'dashboard' },
     { name: 'Requests', path: 'requests' },
-    { name: 'User Management', path: 'users' },
+    { name: 'Member Management', path: 'members' },
     { name: 'Category and Product', path: 'products' },
   ];
 
   return (
-    <Layout navs={navs}>
+    <Layout navs={navs} pathName={'manager'}>
       <Outlet />
     </Layout>
   );

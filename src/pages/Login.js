@@ -16,9 +16,9 @@ const Login = () => {
   useEffect(() => {
     if (user) {
       if (isAdmin()) {
-        navigate('/admin/dashboard');
+        navigate('/manager/dashboard');
       } else if (isPurchaseTeam()) {
-        navigate('/purchase/requests');
+        navigate('/member/requests');
       }
     }
   }, [user, isAdmin, isPurchaseTeam, navigate]);
