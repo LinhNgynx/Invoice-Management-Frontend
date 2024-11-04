@@ -22,7 +22,6 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/create-request" element={<CreateRequest />} />
           <Route
             path="/admin/dashboard/*"
             element={
@@ -40,7 +39,7 @@ const App = () => {
               <PrivateRoute element={<PurchaseDashboard />} requiredRole="purchase" />
             }
           >
-            {/* <Route path="create-request" element={<CreateRequest />} /> */}
+            <Route path="create-request" element={<CreateRequest />} />
             <Route path="requests" element={<RequestList />} />
             <Route path="requests/:id" element={<RequestDetail />} />
             <Route path="save-bill" element={<SaveBill />} />
