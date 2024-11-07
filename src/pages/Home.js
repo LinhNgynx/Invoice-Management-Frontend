@@ -1,15 +1,28 @@
 // src/pages/Home.js
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 const Home = () => {
+  const { checkUser, isAdmin, isPurchaseTeam } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  navigate('/login');
-
   useEffect(() => {
-    navigate('/login');
-  }, [navigate]);
+    const checkJwt = async () => {
+      const user = await checkUser();
+      if (user) {
+        if (user.role === 'MANAGER') {
+          navigate('/manager/dashboard');
+        } else {
+          navigate('/member/requests');
+        }
+      } else {
+        navigate('/login');
+      }
+    };
+
+    checkJwt();
+  }, [checkUser, isAdmin, isPurchaseTeam, navigate]);
 
   return <div></div>;
 };

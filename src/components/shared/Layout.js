@@ -16,7 +16,7 @@ const Layout = ({ children, navs, pathName }) => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-800 text-white flex flex-col">
+      <aside className="w-64 bg-gray-800 text-white flex flex-col fixed h-full">
         <div className="p-6 text-xl font-bold text-center border-b border-gray-700">
           Invoice Active
         </div>
@@ -38,12 +38,12 @@ const Layout = ({ children, navs, pathName }) => {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1">
+      <div className="flex-1 ml-64">
         {/* Header */}
-        <header className="bg-white border-b border-gray-300 p-4 flex justify-between items-center">
+        <header className="bg-white border-b border-gray-300 p-4 flex justify-between items-center sticky top-0 z-10">
           <h1 className="text-lg font-semibold">Invoice Management System</h1>
           <div className="flex items-center space-x-4">
-            <div className="">{user.name}</div>
+            <div>{user?.name}</div>
             <button onClick={doLogout}>
               <IoLogOutOutline className="text-2xl" />
             </button>

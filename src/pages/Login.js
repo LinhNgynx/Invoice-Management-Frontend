@@ -1,27 +1,17 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const { user, setUser, isAdmin, isPurchaseTeam } = useContext(AuthContext);
+  const { setUser } = useContext(AuthContext);
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',
   });
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user) {
-      if (isAdmin()) {
-        navigate('/manager/dashboard');
-      } else if (isPurchaseTeam()) {
-        navigate('/member/requests');
-      }
-    }
-  }, [user, isAdmin, isPurchaseTeam, navigate]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -36,7 +26,13 @@ const Login = () => {
       );
       if (res.status === 200) {
         const loginUser = res.data.items;
+        localStorage.setItem('token', loginUser.jwt);
         setUser(loginUser);
+        if (res.data.items.role === 'MANAGER') {
+          navigate('/manager/dashboard');
+        } else {
+          navigate('/member/requests');
+        }
         return true;
       } else {
         toast.error(res.data.message);

@@ -7,6 +7,8 @@ Modal.setAppElement('#root');
 
 const MemberList = () => {
   const [members, setMembers] = useState([]);
+  const [filteredMembers, setFilteredMembers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newMember, setNewMember] = useState({
     name: '',
@@ -19,6 +21,7 @@ const MemberList = () => {
       try {
         const response = await axios.get('http://localhost:8080/api/users/');
         setMembers(response.data.items);
+        setFilteredMembers(response.data.items); // Khởi tạo danh sách hiển thị
       } catch (error) {
         console.error('Error fetching requests', error);
       }
@@ -26,7 +29,19 @@ const MemberList = () => {
     fetchRequests();
   }, []);
 
-  // Function to handle adding a new member
+  const handleSearch = e => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+
+    const filtered = members.filter(
+      member =>
+        member.name.toLowerCase().includes(term) ||
+        member.userName.toLowerCase().includes(term) ||
+        member.id.toString().includes(term),
+    );
+    setFilteredMembers(filtered);
+  };
+
   const addMember = async () => {
     try {
       const res = await axios.post(
@@ -34,14 +49,9 @@ const MemberList = () => {
         newMember,
       );
       if (res.status === 200) {
-        const updatedMembers = [
-          ...members,
-          {
-            id: members.length + 1,
-            ...newMember,
-          },
-        ];
+        const updatedMembers = [...members, res.data.items];
         setMembers(updatedMembers);
+        setFilteredMembers(updatedMembers); // Cập nhật danh sách hiển thị
         toast.success('Thêm thành viên thành công');
       } else {
         toast.error(res.data.message);
@@ -53,13 +63,13 @@ const MemberList = () => {
     closeModal();
   };
 
-  // Function to handle deleting a member
   const deleteMember = async id => {
     try {
       const res = await axios.delete(`http://localhost:8080/api/users/${id}`);
       if (res.status === 200) {
         const updatedMembers = members.filter(member => member.id !== id);
         setMembers(updatedMembers);
+        setFilteredMembers(updatedMembers); // Cập nhật danh sách hiển thị
         toast.success('Xóa thành viên thành công');
       } else {
         toast.error(res.data.message);
@@ -69,16 +79,13 @@ const MemberList = () => {
     }
   };
 
-  // Open the modal
   const openModal = () => setIsModalOpen(true);
 
-  // Close the modal
   const closeModal = () => {
     setIsModalOpen(false);
     setNewMember({ name: '', userName: '', password: '' });
   };
 
-  // Handle form changes in modal
   const handleChange = e => {
     const { name, value } = e.target;
     setNewMember(prevMember => ({
@@ -89,21 +96,30 @@ const MemberList = () => {
 
   return (
     <div className="min-h-screen">
-      <ToastContainer></ToastContainer>
-      <h1 className="text-2xl font-bold text-gray-800">Member List</h1>
+      <ToastContainer />
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        <h1 className="text-2xl font-bold text-gray-800 mb-4">Member List</h1>
 
-      {/* Add Member Button */}
-      <div className="flex justify-end">
-        <button
-          onClick={openModal}
-          className="mb-4 px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition duration-200"
-        >
-          Add Member
-        </button>
-      </div>
+        <div className="flex justify-between items-center mb-4">
+          {/* Search Input */}
+          <input
+            type="text"
+            placeholder="Search by Name, Username, or ID"
+            value={searchTerm}
+            onChange={handleSearch}
+            className="px-4 py-2 border rounded-md w-1/2"
+          />
 
-      {/* Member List Table */}
-      <div className="overflow-x-auto w-full">
+          {/* Add Member Button */}
+          <button
+            onClick={openModal}
+            className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition duration-200"
+          >
+            Add Member
+          </button>
+        </div>
+
+        {/* Member List Table */}
         <table className="min-w-full bg-white shadow-lg rounded-lg overflow-hidden">
           <thead>
             <tr className="bg-gray-200 text-gray-700 text-left">
@@ -114,7 +130,7 @@ const MemberList = () => {
             </tr>
           </thead>
           <tbody>
-            {members.map(member => (
+            {filteredMembers.map(member => (
               <tr key={member.id} className="border-b last:border-none">
                 <td className="py-4 px-6 text-center">{member.id}</td>
                 <td className="py-4 px-6">{member.userName}</td>
@@ -165,7 +181,7 @@ const MemberList = () => {
               <input
                 type="text"
                 name="userName"
-                value={newMember.username}
+                value={newMember.userName}
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-2 border rounded-md"
