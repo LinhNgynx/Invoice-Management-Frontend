@@ -52,7 +52,7 @@ const MemberList = () => {
         const updatedMembers = [...members, res.data.items];
         setMembers(updatedMembers);
         setFilteredMembers(updatedMembers); // Cập nhật danh sách hiển thị
-        toast.success('Thêm thành viên thành công');
+        toast.success('Add member succesfully');
       } else {
         toast.error(res.data.message);
       }
@@ -70,7 +70,7 @@ const MemberList = () => {
         const updatedMembers = members.filter(member => member.id !== id);
         setMembers(updatedMembers);
         setFilteredMembers(updatedMembers); // Cập nhật danh sách hiển thị
-        toast.success('Xóa thành viên thành công');
+        toast.success('Delete member successfully');
       } else {
         toast.error(res.data.message);
       }

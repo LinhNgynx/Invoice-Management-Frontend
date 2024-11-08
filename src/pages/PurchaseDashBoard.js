@@ -4,8 +4,8 @@ import Layout from '../components/shared/Layout';
 
 const PurchaseDashboard = () => {
   const navs = [
-    { name: 'Create Request', path: 'create-request' },
     { name: 'Requests', path: 'requests' },
+    { name: 'Create Request', path: 'create-request' },
   ];
 
   return (

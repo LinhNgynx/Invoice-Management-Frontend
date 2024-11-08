@@ -12,7 +12,7 @@ const Home = () => {
       const user = await checkUser();
       if (user) {
         if (user.role === 'MANAGER') {
-          navigate('/manager/dashboard');
+          navigate('/manager/requests');
         } else {
           navigate('/member/requests');
         }
