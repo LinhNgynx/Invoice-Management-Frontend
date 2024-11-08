@@ -69,6 +69,22 @@ const RequestItem = ({ item, index, setRequests, requests }) => {
     }
   };
 
+  const deleteBill = async id => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:8080/api/requests/bills/${id}`,
+      );
+      if (res.status === 200) {
+        setBills(bills.filter(b => b.id !== id));
+        toast.success('Delete bill successfully');
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+
   const updateState = async (id, state) => {
     try {
       const res = await axios.put(`http://localhost:8080/api/requests/${id}`, {
@@ -186,20 +202,7 @@ const RequestItem = ({ item, index, setRequests, requests }) => {
                     </a>
                     <button
                       className="text-red-500"
-                      onClick={() => {
-                        try {
-                          const res = axios.delete(
-                            `http://localhost:8080/api/requests/bills/${bill.id}`,
-                          );
-                          console.log(res);
-                          if (res.status === 200) {
-                            setBills(bills.filter(b => b.id !== bill.id));
-                            toast.success('Delete bill successfully');
-                          }
-                        } catch (error) {
-                          console.log(error);
-                        }
-                      }}
+                      onClick={() => deleteBill(bill.id)}
                     >
                       <TrashIcon className="size-6" />
                     </button>

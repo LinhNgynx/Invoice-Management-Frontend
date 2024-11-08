@@ -132,16 +132,16 @@ const RequestDetail = () => {
         {/* Product Details */}
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-sky-700 mb-1">
-            Chi tiết sản phẩm
+            Product Detail
           </h2>
           <table className="min-w-full bg-white shadow-lg rounded-lg overflow-hidden">
             <thead>
-              <tr className="bg-gray-200 text-gray-700 text-left">
+              <tr className="bg-gray-200 text-left">
                 <th className="py-3 px-6 text-center font-semibold">ID</th>
-                <th className="py-3 px-6 font-semibold">Tên</th>
-                <th className="py-3 px-6 font-semibold">Số lượng</th>
-                <th className="py-3 px-6 font-semibold">Giá</th>
-                <th className="py-3 px-6 font-semibold">Tổng giá</th>
+                <th className="py-3 px-6 font-semibold">Name</th>
+                <th className="py-3 px-6 font-semibold">Amount</th>
+                <th className="py-3 px-6 font-semibold">Price</th>
+                <th className="py-3 px-6 font-semibold">Total Price</th>
               </tr>
             </thead>
             <tbody>
