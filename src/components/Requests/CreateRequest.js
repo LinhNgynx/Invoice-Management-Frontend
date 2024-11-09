@@ -7,6 +7,7 @@ import { toast, ToastContainer } from 'react-toastify';
 
 const CreateRequest = () => {
   const [categories, setCategories] = useState([]);
+  const [productCategory, setProductCategory] = useState([])
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -73,6 +74,11 @@ const CreateRequest = () => {
     if (product) {
       const total = price * quantity;
 
+      if(orderItems.find(p => product.id === p.id)) {
+        toast.warn("Product is already in cart, if you want to change, remove it first");
+        return;
+      }
+
       setOrderItems([
         ...orderItems,
         {
@@ -86,6 +92,7 @@ const CreateRequest = () => {
 
       setTotalAmount(prev => prev + total);
       setSelectedProduct(null);
+      setSelectedCategory(null);
       setSearchCategoryTerm('');
       setSearchProductTerm('');
       setQuantity(1);
@@ -124,10 +131,17 @@ const CreateRequest = () => {
   // Select a category and close the dropdown
   const handleSelectCategory = category => {
     setSearchCategoryTerm(category.name);
-    console.log(category);
     setSelectedCategory(category.id);
     setIsCateDropdownOpen(false);
   };
+
+  // Handle category selection and set products
+  const handleCategorySelect = (categoryId) => {
+    const category = categories.find(cat => cat.id === categoryId);
+    setSelectedCategory(category);
+    setProductCategory(category ? category.products : []);
+  };
+
 
   // Filter products based on the search term
   const handleProductSearchChange = e => {
@@ -149,7 +163,6 @@ const CreateRequest = () => {
   // Select a product and close the dropdown
   const handleSelectProduct = product => {
     setSearchProductTerm(product.name);
-    console.log(product);
     setSelectedProduct(product.id);
     setIsProDropdownOpen(false);
   };
@@ -197,7 +210,56 @@ const CreateRequest = () => {
                 Add Product
               </h2>
               {/* big div */}
-              <div className="space-y-2">
+              <div className="flex flex-col space-y-2">
+                {/* Category */}
+                <h2 className="mb-2 font-bold">Category</h2>
+                <div className="w-full max-w-sm">
+                  {/* Category Dropdown */}
+                  <label className="block mb-2 font-medium">See products by category:</label>
+                  <select 
+                    onChange={(e) => handleCategorySelect(e.target.value)}
+                    className="w-full border px-4 py-2 rounded-md"
+                    defaultValue=""
+                  >
+                    <option value="" disabled>Select a category</option>
+                    {categories.map(category => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Product List */}
+                  {selectedCategory && (
+                    <div className="mt-4">
+                      <h3 className="text-lg font-semibold">
+                        Products in {selectedCategory.name}:
+                      </h3>
+                      {productCategory.length > 0 ? (
+                        <ul className="space-y-2 mt-2">
+                          {productCategory.map(product => (
+                            <li 
+                              key={product.id} 
+                              className="flex justify-between items-center border p-2 rounded-md"
+                            >
+                              <span>{product.name}</span>
+                              <button 
+                                onClick={() => handleSelectProduct(product)} 
+                                className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600"
+                              >
+                                Select
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-gray-500">No products available</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Product */}
                 <div className="flex flex-row justify-between mb-4">
                   <div>
                     <h2 className="mb-2 font-bold">Product</h2>
@@ -240,7 +302,7 @@ const CreateRequest = () => {
                         value={selectedProduct || ''}
                         onChange={e => {
                           setSelectedProduct(e.target.value);
-                          setSearchProductTerm('');
+                          setSearchProductTerm("");
                         }}
                       >
                         <option value="">Please select</option>
@@ -326,15 +388,9 @@ const CreateRequest = () => {
                         <tr key={item.id} className="border-b last:border-none">
                           <td className="py-4 px-6 text-center">{item.id}</td>
                           <td className="py-4 px-6 text-center">{item.name}</td>
-                          <td className="py-4 px-6 text-center">
-                            {item.price} VND
-                          </td>
-                          <td className="py-4 px-6 text-center">
-                            {item.quantity}
-                          </td>
-                          <td className="py-4 px-6 text-center">
-                            {item.total} VND
-                          </td>
+                          <td className="py-4 px-6 text-center">{item.price} VND</td>
+                          <td className="py-4 px-6 text-center">{item.quantity}</td>
+                          <td className="py-4 px-6 text-center">{item.total} VND</td>
                           <td className="py-4 px-6 text-center">
                             <button
                               className="text-red-500"
