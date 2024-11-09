@@ -29,7 +29,7 @@ const Login = () => {
         localStorage.setItem('token', loginUser.jwt);
         setUser(loginUser);
         if (res.data.items.role === 'MANAGER') {
-          navigate('/manager/dashboard');
+          navigate('/manager/requests');
         } else {
           navigate('/member/requests');
         }

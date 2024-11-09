@@ -25,6 +25,9 @@ const Product = () => {
   }, []);
 
   const handleAddCategory = async () => {
+    if (categoryName == null || categoryName === '') {
+      return;
+    }
     try {
       const data = { name: categoryName };
       const res = await axios.post(
@@ -34,7 +37,7 @@ const Product = () => {
       if (res.status === 200) {
         setCategories([...categories, res.data.items]);
         setCategoryName('');
-        toast.success('Thêm danh mục thành công');
+        toast.success('Add category successfully');
       } else {
         toast.error(res.data.message);
       }
@@ -53,7 +56,7 @@ const Product = () => {
           category => category.id !== categoryId,
         );
         setCategories(updatedCategories);
-        toast.success('Xóa danh mục thành công');
+        toast.success('Delete category successfully');
       } else {
         toast.error(res.data.message);
       }
@@ -63,27 +66,33 @@ const Product = () => {
   };
 
   const handleAddProduct = async categoryId => {
+    if (productNames[categoryId] == null || productNames[categoryId] === '') {
+      return;
+    }
     try {
       const data = { name: productNames[categoryId], categoryId };
       const res = await axios.post('http://localhost:8080/api/products/', data);
+
       if (res.status === 200) {
         setCategories(
           categories.map(category =>
             category.id === categoryId
               ? {
                   ...category,
-                  products: [...category.products, res.data.items],
+                  products: category.products
+                    ? [...category.products, res.data.items]
+                    : [res.data.items],
                 }
               : category,
           ),
         );
         setProductNames({ ...productNames, [categoryId]: '' });
-        toast.success('Thêm sản phẩm thành công');
+        toast.success('Add product successfully');
       } else {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data.message);
     }
   };
 
@@ -105,7 +114,7 @@ const Product = () => {
               : category,
           ),
         );
-        toast.success('Xóa sản phẩm thành công');
+        toast.success('Delete product successfully');
       } else {
         toast.error(res.data.message);
       }
@@ -179,7 +188,7 @@ const Product = () => {
                   {category.name}
                 </h2>
                 <div>
-                  {category.products.length === 0 ? (
+                  {!category.products || category.products.length === 0 ? (
                     <button
                       onClick={() => handleDeleteCategory(category.id)}
                       className="text-red-500 text-sm hover:underline"
