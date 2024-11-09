@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 import { toast, ToastContainer } from 'react-toastify';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 Modal.setAppElement('#root');
 
@@ -15,11 +16,16 @@ const MemberList = () => {
     userName: '',
     password: '',
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await axios.get('https://invoice-backend-v1.onrender.com/api/users/');
+        setLoading(true);
+        const response = await axios.get(
+          'https://invoice-backend-v1.onrender.com/api/users/',
+        );
+        setLoading(false);
         setMembers(response.data.items);
         setFilteredMembers(response.data.items); // Khởi tạo danh sách hiển thị
       } catch (error) {
@@ -57,7 +63,9 @@ const MemberList = () => {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
+      toast.error(
+        error?.response?.data?.message ?? 'An unknown error has occurred',
+      );
     }
 
     closeModal();
@@ -65,7 +73,9 @@ const MemberList = () => {
 
   const deleteMember = async id => {
     try {
-      const res = await axios.delete(`https://invoice-backend-v1.onrender.com/api/users/${id}`);
+      const res = await axios.delete(
+        `https://invoice-backend-v1.onrender.com/api/users/${id}`,
+      );
       if (res.status === 200) {
         const updatedMembers = members.filter(member => member.id !== id);
         setMembers(updatedMembers);
@@ -75,7 +85,9 @@ const MemberList = () => {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
+      toast.error(
+        error?.response?.data?.message ?? 'An unknown error has occurred',
+      );
     }
   };
 
@@ -100,53 +112,68 @@ const MemberList = () => {
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold text-gray-800 mb-4">Member List</h1>
 
-        <div className="flex justify-between items-center mb-4">
-          {/* Search Input */}
-          <input
-            type="text"
-            placeholder="Search by Name, Username, or ID"
-            value={searchTerm}
-            onChange={handleSearch}
-            className="px-4 py-2 border rounded-md w-1/2"
-          />
+        {loading ? (
+          <div className="flex w-full justify-center">
+            <ClipLoader
+              loading={loading}
+              size={50}
+              aria-label="Loading Spinner"
+              data-testid="loader"
+            />
+          </div>
+        ) : (
+          <>
+            <div className="flex justify-between items-center mb-4">
+              {/* Search Input */}
+              <input
+                type="text"
+                placeholder="Search by Name, Username, or ID"
+                value={searchTerm}
+                onChange={handleSearch}
+                className="px-4 py-2 border rounded-md w-1/2"
+              />
 
-          {/* Add Member Button */}
-          <button
-            onClick={openModal}
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition duration-200"
-          >
-            Add Member
-          </button>
-        </div>
+              {/* Add Member Button */}
+              <button
+                onClick={openModal}
+                className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition duration-200"
+              >
+                Add Member
+              </button>
+            </div>
 
-        {/* Member List Table */}
-        <table className="min-w-full bg-white shadow-lg rounded-lg overflow-hidden">
-          <thead>
-            <tr className="bg-gray-200 text-gray-700 text-left">
-              <th className="py-3 px-6 text-center font-semibold">ID</th>
-              <th className="py-3 px-6 font-semibold">Username</th>
-              <th className="py-3 px-6 font-semibold">Name</th>
-              <th className="py-3 px-6 text-center font-semibold">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredMembers.map(member => (
-              <tr key={member.id} className="border-b last:border-none">
-                <td className="py-4 px-6 text-center">{member.id}</td>
-                <td className="py-4 px-6">{member.userName}</td>
-                <td className="py-4 px-6">{member.name}</td>
-                <td className="py-4 px-6 text-center">
-                  <button
-                    onClick={() => deleteMember(member.id)}
-                    className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition duration-200"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            {/* Member List Table */}
+            <table className="min-w-full bg-white shadow-lg rounded-lg overflow-hidden">
+              <thead>
+                <tr className="bg-gray-200 text-gray-700 text-left">
+                  <th className="py-3 px-6 text-center font-semibold">ID</th>
+                  <th className="py-3 px-6 font-semibold">Username</th>
+                  <th className="py-3 px-6 font-semibold">Name</th>
+                  <th className="py-3 px-6 text-center font-semibold">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredMembers.map(member => (
+                  <tr key={member.id} className="border-b last:border-none">
+                    <td className="py-4 px-6 text-center">{member.id}</td>
+                    <td className="py-4 px-6">{member.userName}</td>
+                    <td className="py-4 px-6">{member.name}</td>
+                    <td className="py-4 px-6 text-center">
+                      <button
+                        onClick={() => deleteMember(member.id)}
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition duration-200"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        )}
       </div>
 
       {/* Add Member Modal */}
