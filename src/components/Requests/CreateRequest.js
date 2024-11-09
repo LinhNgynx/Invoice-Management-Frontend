@@ -222,7 +222,7 @@ const CreateRequest = () => {
               {/* big div */}
               <div className='flex text-white gap-2 p-3 justify-center'>
                 <div onClick={() => setChooseProductMode(0)} className={`bg-green-600 p-2 rounded-md cursor-pointer ${chooseProductMode === 1 ? 'bg-white ring-1 ring-green-400 text-green-600' : 'bg-green-600 text-white'}`}>Choose product by category</div>
-                <div onClick={() => setChooseProductMode(1)} className={`bg-green-600 p-2 rounded-md cursor-pointer ${chooseProductMode === 0 ? 'bg-white ring-1 ring-green-400 text-green-600' : 'bg-green-600 text-white'}`}>Choose product by list of products</div>
+                <div onClick={() => setChooseProductMode(1)} className={`bg-green-600 p-2 rounded-md cursor-pointer ${chooseProductMode === 0 ? 'bg-white ring-1 ring-green-400 text-green-600' : 'bg-green-600 text-white'}`}>Search product by name</div>
               </div>
               <div className="flex flex-col space-y-2">
                 {
@@ -433,7 +433,7 @@ const CreateRequest = () => {
               </div>
               <div className="text-right self-end mt-9 text-xl font-bold leading-none max-md:mr-2.5">
                 Total Amount :{' '}
-                <span className="text-green-600">{totalAmount} VND</span>
+                <span className="text-green-600">{formatPrice(totalAmount)} VND</span>
               </div>
             </section>
 
