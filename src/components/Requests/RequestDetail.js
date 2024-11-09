@@ -1,18 +1,39 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import moment from 'moment';
 import { AuthContext } from '../../context/AuthContext';
 import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { ArrowUpTrayIcon } from '@heroicons/react/24/solid';
+import { ArrowUpTrayIcon, TrashIcon } from '@heroicons/react/24/solid';
+import { formatPrice } from '../../utils';
 
 const RequestDetail = () => {
   const { isAdmin, isPurchaseTeam } = useContext(AuthContext);
   const location = useLocation();
   const { request } = location.state || {};
+  const [bills, setBills] = useState(location.state?.request.bills);
   const navigate = useNavigate();
   const uploadRef = useRef(null);
+
+  if (request.createdAt[6] > 100) request.createdAt[6] = 0;
+  if (request.updatedAt[6] > 100) request.updatedAt[6] = 0;
+
+  const deleteBill = async id => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:8080/api/requests/bills/${id}`,
+      );
+      if (res.status === 200) {
+        setBills(bills.filter(b => b.id !== id));
+        toast.success('Delete bill successfully');
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
+    }
+  };
 
   const uploadFile = async (id, file) => {
     try {
@@ -24,11 +45,14 @@ const RequestDetail = () => {
       );
       if (res.status === 200) {
         toast.success('Upload bill successfully');
+        if (res.data?.items) {
+          setBills([...bills, res.data.items]);
+        }
       } else {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
     }
   };
 
@@ -44,7 +68,7 @@ const RequestDetail = () => {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
     }
   };
 
@@ -63,7 +87,7 @@ const RequestDetail = () => {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
     }
   };
 
@@ -150,9 +174,9 @@ const RequestDetail = () => {
                   <td className="py-4 px-6 text-center">{product.id}</td>
                   <td className="py-4 px-6">{product.name}</td>
                   <td className="py-4 px-6">{product.quantity}</td>
-                  <td className="py-4 px-6">{product.price.toFixed(2)} VND</td>
+                  <td className="py-4 px-6">{formatPrice(product.price)} VND</td>
                   <td className="py-4 px-6">
-                    {(product.quantity * product.price).toFixed(2)} VND
+                    {formatPrice(product.quantity * product.price)} VND
                   </td>
                 </tr>
               ))}
@@ -166,19 +190,19 @@ const RequestDetail = () => {
           <div className="flex flex-row justify-between">
             <strong>Deposit:</strong>{' '}
             <span className="text-orange-600">
-              {request.deposit.toFixed(2)} VND
+              {formatPrice(request.deposit)} VND
             </span>
           </div>
           <div className="flex flex-row justify-between">
             <strong>Total Price:</strong>{' '}
             <span className="text-green-600 font-medium text-lg">
-              {request.totalPrice.toFixed(2)} VND
+              {formatPrice(request.totalPrice)} VND
             </span>
           </div>
         </div>
 
         <div className="">
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row items-center mb-2">
             <h2 className="text-lg font-semibold text-sky-700 mr-10">Bills</h2>
             {isPurchaseTeam() && request.state === 'ACCEPTED' && (
               <button
@@ -198,6 +222,30 @@ const RequestDetail = () => {
                   }}
                 />
               </button>
+            )}
+          </div>
+          <div className="">
+            {bills.length > 0 ? (
+              bills.map((bill, index) => {
+                return (
+                  <div key={index} className="flex flex-row gap-2 mb-1 w-1/4">
+                    <a
+                      className="text-sky-500 hover:text-sky-700 text-ellipsis flex-1"
+                      href={`http://localhost:8080/api/requests/bills/${bill.id}`}
+                    >
+                      {bill.file}
+                    </a>
+                    <button
+                      className="text-red-500"
+                      onClick={() => deleteBill(bill.id)}
+                    >
+                      <TrashIcon className="size-6" />
+                    </button>
+                  </div>
+                );
+              })
+            ) : (
+              <p>No bill uploaded</p>
             )}
           </div>
         </div>

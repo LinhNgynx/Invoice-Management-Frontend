@@ -20,7 +20,7 @@ const PrivateRoute = ({ element, requiredRole }) => {
     };
 
     verifyAccess();
-  }, [checkUser, requiredRole]);
+  }, [requiredRole]);
 
   if (loading) {
     return (

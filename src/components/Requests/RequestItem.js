@@ -10,24 +10,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/solid';
 import { toast, ToastContainer } from 'react-toastify';
-
-const uploadFile = async (id, file) => {
-  try {
-    const formData = new FormData();
-    formData.append('file', file);
-    const res = await axios.put(
-      `http://localhost:8080/api/requests/${id}/bills/`,
-      formData,
-    );
-    if (res.status === 200) {
-      toast.success('Upload bill successfully');
-    } else {
-      toast.error(res.data.message);
-    }
-  } catch (error) {
-    toast.error(error.response.data.message);
-  }
-};
+import { formatPrice } from '../../utils';
 
 const RequestItem = ({ item, index, setRequests, requests }) => {
   const { isAdmin, isPurchaseTeam } = useContext(AuthContext);
@@ -37,6 +20,8 @@ const RequestItem = ({ item, index, setRequests, requests }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const uploadRef = useRef(null);
+
+  if (item.createdAt[6] > 100) item.createdAt[6] = 0;
 
   let statusClass = '';
   switch (state) {
@@ -65,7 +50,28 @@ const RequestItem = ({ item, index, setRequests, requests }) => {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
+    }
+  };
+
+  const uploadFile = async (id, file) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await axios.put(
+        `http://localhost:8080/api/requests/${id}/bills/`,
+        formData,
+      );
+      if (res.status === 200) {
+        toast.success('Upload bill successfully');
+        if (res.data?.items) {
+          setBills([...bills, res.data.items]);
+        }
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
     }
   };
 
@@ -81,7 +87,7 @@ const RequestItem = ({ item, index, setRequests, requests }) => {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
     }
   };
 
@@ -97,7 +103,7 @@ const RequestItem = ({ item, index, setRequests, requests }) => {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
     }
   };
 
@@ -117,8 +123,8 @@ const RequestItem = ({ item, index, setRequests, requests }) => {
           {moment(item.createdAt).format('DD/MM/YYYY H:mm:ss')}
         </td>
         <td className="py-4 px-6">{item.user.name}</td>
-        <td className="py-4 px-6">{item.deposit}</td>
-        <td className="py-4 px-6">{item.totalPrice}</td>
+        <td className="py-4 px-6">{formatPrice(item.deposit)}</td>
+        <td className="py-4 px-6">{formatPrice(item.totalPrice)}</td>
         <td className="py-4 px-6 text-center">
           <span className={statusClass}>{state}</span>
         </td>

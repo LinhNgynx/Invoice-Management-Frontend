@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
         return loginUser;
       }
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error?.response?.data?.message ?? "An unknown error has occurred");
     }
   };
 

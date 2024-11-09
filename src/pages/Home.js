@@ -22,7 +22,7 @@ const Home = () => {
     };
 
     checkJwt();
-  }, [checkUser, isAdmin, isPurchaseTeam, navigate]);
+  }, [isAdmin, isPurchaseTeam]);
 
   return <div></div>;
 };

@@ -30,14 +30,14 @@ const MemberList = () => {
   }, []);
 
   const handleSearch = e => {
+    setSearchTerm(e.target.value);
     const term = e.target.value.toLowerCase();
-    setSearchTerm(term);
 
     const filtered = members.filter(
       member =>
         member.name.toLowerCase().includes(term) ||
         member.userName.toLowerCase().includes(term) ||
-        member.id.toString().includes(term),
+        member.id.toString().toLowerCase().includes(term),
     );
     setFilteredMembers(filtered);
   };
@@ -57,7 +57,7 @@ const MemberList = () => {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
     }
 
     closeModal();
@@ -75,7 +75,7 @@ const MemberList = () => {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
     }
   };
 

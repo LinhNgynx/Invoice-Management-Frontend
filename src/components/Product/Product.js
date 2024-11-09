@@ -42,7 +42,7 @@ const Product = () => {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
     }
   };
 
@@ -61,7 +61,7 @@ const Product = () => {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
     }
   };
 
@@ -119,7 +119,7 @@ const Product = () => {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
     }
   };
 

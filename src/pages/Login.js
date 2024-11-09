@@ -39,7 +39,7 @@ const Login = () => {
         return false;
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
     }
   };
 

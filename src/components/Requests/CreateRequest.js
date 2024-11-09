@@ -4,6 +4,8 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { TrashIcon } from '@heroicons/react/24/solid';
 import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { formatPrice } from '../../utils';
 
 const CreateRequest = () => {
   const [categories, setCategories] = useState([]);
@@ -30,6 +32,7 @@ const CreateRequest = () => {
   const { user } = useContext(AuthContext);
 
   const dropdownRef = useRef(null); // Ref for the dropdown container
+  const navigate = useNavigate();
 
   // Close dropdown when clicking outside
   const handleClickOutside = event => {
@@ -188,12 +191,13 @@ const CreateRequest = () => {
         })),
       });
       if (res.status === 200) {
-        toast.success('Create request successfully.');
+        // toast.success('Create request successfully.');
+        navigate('/member/requests');
       } else {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message ?? "An unknown error has occurred");
     }
   };
 
@@ -302,7 +306,12 @@ const CreateRequest = () => {
                         value={selectedProduct || ''}
                         onChange={e => {
                           setSelectedProduct(e.target.value);
-                          setSearchProductTerm("");
+                          const product = products.find(p => p.id === e.target.value);
+                          if (product?.name) {
+                            setSearchProductTerm(product.name);
+                          } else {
+                            setSearchProductTerm('');
+                          }
                         }}
                       >
                         <option value="">Please select</option>
@@ -319,7 +328,6 @@ const CreateRequest = () => {
                     <h2 className="mb-2 font-bold">Price</h2>
                     <div>
                       <input
-                        type="number"
                         min="1"
                         value={price}
                         onChange={e => setPrice(e.target.value)}
@@ -388,7 +396,7 @@ const CreateRequest = () => {
                         <tr key={item.id} className="border-b last:border-none">
                           <td className="py-4 px-6 text-center">{item.id}</td>
                           <td className="py-4 px-6 text-center">{item.name}</td>
-                          <td className="py-4 px-6 text-center">{item.price} VND</td>
+                          <td className="py-4 px-6 text-center">{formatPrice(item.price)} VND</td>
                           <td className="py-4 px-6 text-center">{item.quantity}</td>
                           <td className="py-4 px-6 text-center">{item.total} VND</td>
                           <td className="py-4 px-6 text-center">
