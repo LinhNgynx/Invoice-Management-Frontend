@@ -54,11 +54,11 @@ const CreateRequest = () => {
     const loadData = async () => {
       try {
         const categoryResponse = await axios.get(
-          'http://localhost:8080/api/categories/',
+          'https://invoice-backend-v1.onrender.com/api/categories/',
         );
         setCategories(categoryResponse.data.items);
         const productResponse = await axios.get(
-          'http://localhost:8080/api/products/',
+          'https://invoice-backend-v1.onrender.com/api/products/',
         );
         setProducts(productResponse.data.items);
       } catch (error) {
@@ -178,7 +178,7 @@ const CreateRequest = () => {
     }
 
     try {
-      const res = await axios.post('http://localhost:8080/api/requests/', {
+      const res = await axios.post('https://invoice-backend-v1.onrender.com/api/requests/', {
         userId: user.id,
         detail: detail,
         deposit: deposit,

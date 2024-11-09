@@ -15,10 +15,10 @@ const RequestList = () => {
         var res;
         if (role === 'MEMBER') {
           res = await axios.get(
-            `http://localhost:8080/api/requests/user/${user.id}`,
+            `https://invoice-backend-v1.onrender.com/api/requests/user/${user.id}`,
           );
         } else {
-          res = await axios.get('http://localhost:8080/api/requests/');
+          res = await axios.get('https://invoice-backend-v1.onrender.com/api/requests/');
         }
         if (res.status) {
           setRequests(res.data.items);

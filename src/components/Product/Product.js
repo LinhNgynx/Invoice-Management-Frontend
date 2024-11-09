@@ -14,7 +14,7 @@ const Product = () => {
     const fetchRequests = async () => {
       try {
         const response = await axios.get(
-          'http://localhost:8080/api/categories/',
+          'https://invoice-backend-v1.onrender.com/api/categories/',
         );
         setCategories(response.data.items);
       } catch (error) {
@@ -31,7 +31,7 @@ const Product = () => {
     try {
       const data = { name: categoryName };
       const res = await axios.post(
-        'http://localhost:8080/api/categories/',
+        'https://invoice-backend-v1.onrender.com/api/categories/',
         data,
       );
       if (res.status === 200) {
@@ -49,7 +49,7 @@ const Product = () => {
   const handleDeleteCategory = async categoryId => {
     try {
       const res = await axios.delete(
-        `http://localhost:8080/api/categories/${categoryId}`,
+        `https://invoice-backend-v1.onrender.com/api/categories/${categoryId}`,
       );
       if (res.status === 200) {
         const updatedCategories = categories.filter(
@@ -71,7 +71,7 @@ const Product = () => {
     }
     try {
       const data = { name: productNames[categoryId], categoryId };
-      const res = await axios.post('http://localhost:8080/api/products/', data);
+      const res = await axios.post('https://invoice-backend-v1.onrender.com/api/products/', data);
 
       if (res.status === 200) {
         setCategories(
@@ -99,7 +99,7 @@ const Product = () => {
   const handleDeleteProduct = async (categoryId, productId) => {
     try {
       const res = await axios.delete(
-        `http://localhost:8080/api/products/${productId}`,
+        `https://invoice-backend-v1.onrender.com/api/products/${productId}`,
       );
       if (res.status === 200) {
         setCategories(

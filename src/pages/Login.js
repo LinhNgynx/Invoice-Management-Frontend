@@ -21,7 +21,7 @@ const Login = () => {
   const login = async credentials => {
     try {
       const res = await axios.post(
-        'http://localhost:8080/api/auth/logIn',
+        'https://invoice-backend-v1.onrender.com/api/auth/logIn',
         credentials,
       );
       if (res.status === 200) {

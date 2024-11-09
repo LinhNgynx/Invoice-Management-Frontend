@@ -22,7 +22,7 @@ const RequestDetail = () => {
   const deleteBill = async id => {
     try {
       const res = await axios.delete(
-        `http://localhost:8080/api/requests/bills/${id}`,
+        `https://invoice-backend-v1.onrender.com/api/requests/bills/${id}`,
       );
       if (res.status === 200) {
         setBills(bills.filter(b => b.id !== id));
@@ -40,7 +40,7 @@ const RequestDetail = () => {
       const formData = new FormData();
       formData.append('file', file);
       const res = await axios.put(
-        `http://localhost:8080/api/requests/${id}/bills/`,
+        `https://invoice-backend-v1.onrender.com/api/requests/${id}/bills/`,
         formData,
       );
       if (res.status === 200) {
@@ -59,7 +59,7 @@ const RequestDetail = () => {
   const deleteItem = async () => {
     try {
       const res = await axios.delete(
-        `http://localhost:8080/api/requests/${request.id}`,
+        `https://invoice-backend-v1.onrender.com/api/requests/${request.id}`,
       );
       if (res.status === 200) {
         toast.success('Delete request successfully');
@@ -75,7 +75,7 @@ const RequestDetail = () => {
   const updateState = async state => {
     try {
       const res = await axios.put(
-        `http://localhost:8080/api/requests/${request.id}`,
+        `https://invoice-backend-v1.onrender.com/api/requests/${request.id}`,
         {
           state,
         },
@@ -231,7 +231,7 @@ const RequestDetail = () => {
                   <div key={index} className="flex flex-row gap-2 mb-1 w-1/4">
                     <a
                       className="text-sky-500 hover:text-sky-700 text-ellipsis flex-1"
-                      href={`http://localhost:8080/api/requests/bills/${bill.id}`}
+                      href={`https://invoice-backend-v1.onrender.com/api/requests/bills/${bill.id}`}
                     >
                       {bill.file}
                     </a>

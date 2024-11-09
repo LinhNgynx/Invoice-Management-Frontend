@@ -41,7 +41,7 @@ const RequestItem = ({ item, index, setRequests, requests }) => {
   const deleteItem = async id => {
     try {
       const res = await axios.delete(
-        `http://localhost:8080/api/requests/${id}`,
+        `https://invoice-backend-v1.onrender.com/api/requests/${id}`,
       );
       if (res.status === 200) {
         setRequests(requests.filter(request => request.id !== id));
@@ -59,7 +59,7 @@ const RequestItem = ({ item, index, setRequests, requests }) => {
       const formData = new FormData();
       formData.append('file', file);
       const res = await axios.put(
-        `http://localhost:8080/api/requests/${id}/bills/`,
+        `https://invoice-backend-v1.onrender.com/api/requests/${id}/bills/`,
         formData,
       );
       if (res.status === 200) {
@@ -78,7 +78,7 @@ const RequestItem = ({ item, index, setRequests, requests }) => {
   const deleteBill = async id => {
     try {
       const res = await axios.delete(
-        `http://localhost:8080/api/requests/bills/${id}`,
+        `https://invoice-backend-v1.onrender.com/api/requests/bills/${id}`,
       );
       if (res.status === 200) {
         setBills(bills.filter(b => b.id !== id));
@@ -93,7 +93,7 @@ const RequestItem = ({ item, index, setRequests, requests }) => {
 
   const updateState = async (id, state) => {
     try {
-      const res = await axios.put(`http://localhost:8080/api/requests/${id}`, {
+      const res = await axios.put(`https://invoice-backend-v1.onrender.com/api/requests/${id}`, {
         state,
       });
       if (res.status === 200) {
@@ -202,7 +202,7 @@ const RequestItem = ({ item, index, setRequests, requests }) => {
                   <div key={index} className="flex flex-row gap-2 mb-1">
                     <a
                       className="text-sky-500 hover:text-sky-700 text-ellipsis flex-1"
-                      href={`http://localhost:8080/api/requests/bills/${bill.id}`}
+                      href={`https://invoice-backend-v1.onrender.com/api/requests/bills/${bill.id}`}
                     >
                       {bill.file}
                     </a>

@@ -19,7 +19,7 @@ const MemberList = () => {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/users/');
+        const response = await axios.get('https://invoice-backend-v1.onrender.com/api/users/');
         setMembers(response.data.items);
         setFilteredMembers(response.data.items); // Khởi tạo danh sách hiển thị
       } catch (error) {
@@ -45,7 +45,7 @@ const MemberList = () => {
   const addMember = async () => {
     try {
       const res = await axios.post(
-        'http://localhost:8080/api/users/',
+        'https://invoice-backend-v1.onrender.com/api/users/',
         newMember,
       );
       if (res.status === 200) {
@@ -65,7 +65,7 @@ const MemberList = () => {
 
   const deleteMember = async id => {
     try {
-      const res = await axios.delete(`http://localhost:8080/api/users/${id}`);
+      const res = await axios.delete(`https://invoice-backend-v1.onrender.com/api/users/${id}`);
       if (res.status === 200) {
         const updatedMembers = members.filter(member => member.id !== id);
         setMembers(updatedMembers);

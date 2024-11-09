@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
   const checkUser = async () => {
     const jwt = localStorage.getItem('token');
     try {
-      const res = await axios.post('http://localhost:8080/api/auth/verifyJwt', {
+      const res = await axios.post('https://invoice-backend-v1.onrender.com/api/auth/verifyJwt', {
         jwt,
       });
       if (res.status === 200) {
