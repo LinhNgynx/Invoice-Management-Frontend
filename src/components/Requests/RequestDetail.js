@@ -5,7 +5,7 @@ import moment from 'moment';
 import { AuthContext } from '../../context/AuthContext';
 import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { ArrowUpTrayIcon, TrashIcon } from '@heroicons/react/24/solid';
+import { ArrowLeftIcon, ArrowUpTrayIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { formatPrice } from '../../utils';
 
 const RequestDetail = () => {
@@ -109,9 +109,12 @@ const RequestDetail = () => {
       <ToastContainer />
       <div className="bg-white p-6 rounded-lg shadow-lg">
         {/* Header */}
-        <h1 className="text-2xl font-bold mb-4">
-          Request Detail - {request.id}
-        </h1>
+        <div className="flex flex-row items-center mb-4">
+          <ArrowLeftIcon className="w-6 h-6 text-blue-500 cursor-pointer mr-2" onClick={() => navigate(-1)} />
+          <h1 className="text-2xl font-bold">
+            Request Detail - {request.id}
+          </h1>
+        </div>
 
         <div className="flex flex-row justify-between">
           <div className="mb-6 w-1/4">

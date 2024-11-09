@@ -28,7 +28,8 @@ const CreateRequest = () => {
   const [searchProductTerm, setSearchProductTerm] = useState('');
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [isProDropdownOpen, setIsProDropdownOpen] = useState(false);
-
+  const [isSaving, setIsSaving] = useState(false);
+  const [chooseProductMode, setChooseProductMode] = useState(0);
   const { user } = useContext(AuthContext);
 
   const dropdownRef = useRef(null); // Ref for the dropdown container
@@ -41,7 +42,6 @@ const CreateRequest = () => {
       setIsProDropdownOpen(false);
     }
   };
-
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
@@ -77,7 +77,7 @@ const CreateRequest = () => {
     if (product) {
       const total = price * quantity;
 
-      if(orderItems.find(p => product.id === p.id)) {
+      if (orderItems.find(p => product.id === p.id)) {
         toast.warn("Product is already in cart, if you want to change, remove it first");
         return;
       }
@@ -173,10 +173,14 @@ const CreateRequest = () => {
   // Handle saving the order
   const saveOrder = async () => {
     if (!user || orderItems.length === 0) {
-      alert('Please add user and order items before saving.');
+      toast.warning('Please add user and order items before saving.');
       return;
     }
-
+    if (!detail || detail === '') {
+      toast.warning('Please enter detail');
+      return;
+    }
+    setIsSaving(true);
     try {
       const res = await axios.post('https://invoice-backend-v1.onrender.com/api/requests/', {
         userId: user.id,
@@ -191,7 +195,8 @@ const CreateRequest = () => {
         })),
       });
       if (res.status === 200) {
-        // toast.success('Create request successfully.');
+        setIsSaving(false);
+        toast.success('Create request successfully.');
         navigate('/member/requests');
       } else {
         toast.error(res.data.message);
@@ -214,142 +219,152 @@ const CreateRequest = () => {
                 Add Product
               </h2>
               {/* big div */}
+              <div className='flex text-white gap-2 p-3 justify-center'>
+                <div onClick={() => setChooseProductMode(0)} className={`bg-green-600 p-2 rounded-md cursor-pointer ${chooseProductMode === 1 ? 'bg-white ring-1 ring-green-400 text-green-600' : 'bg-green-600 text-white'}`}>Choose product by category</div>
+                <div onClick={() => setChooseProductMode(1)} className={`bg-green-600 p-2 rounded-md cursor-pointer ${chooseProductMode === 0 ? 'bg-white ring-1 ring-green-400 text-green-600' : 'bg-green-600 text-white'}`}>Choose product by list of products</div>
+              </div>
               <div className="flex flex-col space-y-2">
-                {/* Category */}
-                <h2 className="mb-2 font-bold">Category</h2>
-                <div className="w-full max-w-sm">
-                  {/* Category Dropdown */}
-                  <label className="block mb-2 font-medium">See products by category:</label>
-                  <select 
-                    onChange={(e) => handleCategorySelect(e.target.value)}
-                    className="w-full border px-4 py-2 rounded-md"
-                    defaultValue=""
-                  >
-                    <option value="" disabled>Select a category</option>
-                    {categories.map(category => (
-                      <option key={category.id} value={category.id}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </select>
-
-                  {/* Product List */}
-                  {selectedCategory && (
-                    <div className="mt-4">
-                      <h3 className="text-lg font-semibold">
-                        Products in {selectedCategory.name}:
-                      </h3>
-                      {productCategory.length > 0 ? (
-                        <ul className="space-y-2 mt-2">
-                          {productCategory.map(product => (
-                            <li 
-                              key={product.id} 
-                              className="flex justify-between items-center border p-2 rounded-md"
-                            >
-                              <span>{product.name}</span>
-                              <button 
-                                onClick={() => handleSelectProduct(product)} 
-                                className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600"
-                              >
-                                Select
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="text-gray-500">No products available</p>
-                      )}
-                    </div>
-                  )}
-                </div>
-                
-                {/* Product */}
-                <div className="flex flex-row justify-between mb-4">
-                  <div>
-                    <h2 className="mb-2 font-bold">Product</h2>
-                    <div className="flex justify-between items-center space-x-4">
-                      <div ref={dropdownRef} className="relative">
-                        <input
-                          type="text"
-                          value={searchProductTerm}
-                          onChange={handleProductSearchChange}
-                          placeholder="Search products..."
+                {
+                  chooseProductMode == 0 ?
+                    // Category
+                    <>
+                      <h2 className="mb-2 font-bold">Category</h2>
+                      <div className="w-full max-w-sm">
+                        {/* Category Dropdown */}
+                        <label className="block mb-2 font-medium">Choose products by category:</label>
+                        <select
+                          onChange={(e) => handleCategorySelect(e.target.value)}
                           className="w-full border px-4 py-2 rounded-md"
-                          onFocus={() => setIsProDropdownOpen(true)}
-                        />
+                          defaultValue=""
+                        >
+                          <option value="" disabled>Select a category</option>
+                          {categories.map(category => (
+                            <option key={category.id} value={category.id}>
+                              {category.name}
+                            </option>
+                          ))}
+                        </select>
 
-                        {isProDropdownOpen && (
-                          <div className="absolute left-0 right-0 mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-y-auto z-10">
-                            {filteredProducts.length > 0 ? (
-                              filteredProducts.map(product => (
-                                <div
-                                  key={product.id}
-                                  onClick={() => handleSelectProduct(product)}
-                                  className="px-4 py-2 cursor-pointer hover:bg-blue-100"
-                                >
-                                  {product.name}
-                                </div>
-                              ))
+                        {/* Product List */}
+                        {selectedCategory && (
+                          <div className="mt-4">
+                            <h3 className="text-lg font-semibold">
+                              Products in {selectedCategory.name}:
+                            </h3>
+                            {productCategory.length > 0 ? (
+                              <ul className="space-y-2 mt-2">
+                                {productCategory.map(product => (
+                                  <li
+                                    key={product.id}
+                                    className="flex justify-between items-center border p-2 rounded-md"
+                                  >
+                                    <span>{product.name}</span>
+                                    <button
+                                      onClick={() => handleSelectProduct(product)}
+                                      className={`text-white px-3 py-1 rounded-md hover:bg-blue-500 ${product.id === selectedProduct ? 'bg-blue-600': 'bg-blue-400'}`}
+                                    >
+                                      Select
+                                    </button>
+                                  </li>
+                                ))}
+                              </ul>
                             ) : (
-                              <div className="px-4 py-2 text-gray-500">
-                                No products found
-                              </div>
+                              <p className="text-gray-500">No products available</p>
                             )}
                           </div>
                         )}
                       </div>
+                    </>
+                    :
+                    // Product
+                    <div className="flex flex-row justify-between mb-4">
+                      <div>
+                        <h2 className="mb-2 font-bold">Product</h2>
+                        <div className="flex justify-between items-center space-x-4">
+                          <div ref={dropdownRef} className="relative">
+                            <input
+                              type="text"
+                              value={searchProductTerm}
+                              onChange={handleProductSearchChange}
+                              placeholder="Search products..."
+                              className="w-full border px-4 py-2 rounded-md"
+                              onFocus={() => setIsProDropdownOpen(true)}
+                            />
 
-                      <span>or see all products</span>
+                            {isProDropdownOpen && (
+                              <div className="absolute left-0 right-0 mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-y-auto z-10">
+                                {filteredProducts.length > 0 ? (
+                                  filteredProducts.map(product => (
+                                    <div
+                                      key={product.id}
+                                      onClick={() => handleSelectProduct(product)}
+                                      className="px-4 py-2 cursor-pointer hover:bg-blue-100"
+                                    >
+                                      {product.name}
+                                    </div>
+                                  ))
+                                ) : (
+                                  <div className="px-4 py-2 text-gray-500">
+                                    No products found
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
 
-                      <select
-                        className="border p-2 rounded-md"
-                        value={selectedProduct || ''}
-                        onChange={e => {
-                          setSelectedProduct(e.target.value);
-                          const product = products.find(p => p.id === e.target.value);
-                          if (product?.name) {
-                            setSearchProductTerm(product.name);
-                          } else {
-                            setSearchProductTerm('');
-                          }
-                        }}
-                      >
-                        <option value="">Please select</option>
-                        {products.map(product => (
-                          <option key={product.id} value={product.id}>
-                            {product.name}
-                          </option>
-                        ))}
-                      </select>
+                          <span>or see all products</span>
+                            
+                          <select
+                            className="border p-2 rounded-md"
+                            value={selectedProduct || ''}
+                            onChange={e => {
+                              setSelectedProduct(e.target.value);
+                              const product = products.find(p => p.id === e.target.value);
+                              if (product?.name) {
+                                setSearchProductTerm(product.name);
+                              } else {
+                                setSearchProductTerm('');
+                              }
+                            }}
+                          >
+                            <option value="">Please select</option>
+                            {products.map(product => (
+                              <option key={product.id} value={product.id}>
+                                {product.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-
-                  <div>
-                    <h2 className="mb-2 font-bold">Price</h2>
-                    <div>
+                }
+                {
+                  selectedProduct && <div className='flex gap-4'>
+                    <div className=''>
+                      <div>{selectedProduct.name}</div>
+                      <h2 className="mb-2 font-bold">Price</h2>
                       <input
                         min="1"
                         value={price}
                         onChange={e => setPrice(e.target.value)}
-                        className="border p-2 rounded-md w-20"
+                        className="border p-2 rounded-md w-40"
                       />
                     </div>
-                  </div>
 
-                  <div>
-                    <h2 className="mb-2 font-bold">Quantity</h2>
                     <div>
-                      <input
-                        type="number"
-                        min="1"
-                        value={quantity}
-                        onChange={e => setQuantity(e.target.value)}
-                        className="border p-2 rounded-md w-20"
-                      />
+                      <h2 className="mb-2 font-bold">Quantity</h2>
+                      <div>
+                        <input
+                          type="number"
+                          min="1"
+                          value={quantity}
+                          onChange={e => setQuantity(e.target.value)}
+                          className="border p-2 rounded-md w-20"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-
+                }
                 <div className="flex flex-row items-top justify-end gap-4">
                   <button
                     onClick={addItemToCart}
@@ -398,7 +413,7 @@ const CreateRequest = () => {
                           <td className="py-4 px-6 text-center">{item.name}</td>
                           <td className="py-4 px-6 text-center">{formatPrice(item.price)} VND</td>
                           <td className="py-4 px-6 text-center">{item.quantity}</td>
-                          <td className="py-4 px-6 text-center">{item.total} VND</td>
+                          <td className="py-4 px-6 text-center">{formatPrice(item.total)} VND</td>
                           <td className="py-4 px-6 text-center">
                             <button
                               className="text-red-500"
@@ -431,7 +446,7 @@ const CreateRequest = () => {
                   <input
                     value={detail}
                     onChange={e => setDetail(e.target.value)}
-                    className="border p-2 rounded-md w-80"
+                    className="border p-2 rounded-md w-80 border-black"
                   />
                 </div>
 
