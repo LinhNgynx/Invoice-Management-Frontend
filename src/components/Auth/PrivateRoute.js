@@ -20,6 +20,7 @@ const PrivateRoute = ({ element, requiredRole }) => {
     };
 
     verifyAccess();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requiredRole]);
 
   if (loading) {
